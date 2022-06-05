@@ -49,7 +49,6 @@ SimpleStorage = w3.eth.contract(abi=abi, bytecode=bytecode)
 
 # Get the latest transaction
 nonce = w3.eth.getTransactionCount(my_address)
-print(nonce)
 # build a transaction
 # sign a transaction
 # send a transaction
@@ -66,3 +65,17 @@ transaction = SimpleStorage.constructor().buildTransaction(
 signed_txn = w3.eth.account.sign_transaction(transaction, private_key=private_key)
 
 # Send the signed transaction
+tx_hash = w3.eth.send_raw_transaction(signed_txn.rawTransaction)
+
+# Wait for blcok confirmation
+tx_receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
+
+# Working with the contract, you need
+# Contract Address
+# Contract ABI
+simple_storage = w3.eth.contract(address=tx_receipt.contractAddress, abi=abi)
+# Call -> Simulate making the call and getting a return value
+# Transat -> Actually make a state change
+
+# Initial value of fav number
+print(simple_storage.functions.retrieve().call())
